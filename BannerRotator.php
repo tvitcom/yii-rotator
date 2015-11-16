@@ -40,7 +40,7 @@ class BannerRotator extends CApplicationComponent
         $path = __DIR__ . DS . self::$tplDir . DS;
         $filelocation = self::findWithoutExtension($path, $id);
 
-        // Вычисляем количество для вывода и отнимания от счетчика показов баннеров:
+        // Вычисляем количество для вывода:
         if (self::typeMetric($metric) === 'percent') {
             $residual = RBanner::residual($id);
             $count = $residual - floor($residual * intval($metric) * 0.01);
