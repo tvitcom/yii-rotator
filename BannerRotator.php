@@ -46,7 +46,8 @@ class BannerRotator extends CApplicationComponent
             $count = $residual;
         }
 
-        if (defined('YII_DEBUG')) {
+        //Next line for debug purposes:
+        if (0) {
             echo '<br>Всего:' . $residual;
             echo '<br>Отнять:' . $count;
             echo '<br>Вывести:' . ceil($count);
@@ -61,7 +62,7 @@ class BannerRotator extends CApplicationComponent
             RBanner::decrementDisplay($id, ceil($count));
             self::overallShow($residual, $filelocation, $count);
         } else {
-            echo '<div class="flash-error">error open or balance  banner is exhausted!!!</div>';
+            echo '<div class="flash-error">banner balance is exhausted!!!</div>';
         }
     }
 
