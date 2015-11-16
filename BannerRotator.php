@@ -39,13 +39,14 @@ class BannerRotator extends CApplicationComponent
         // Find file for id as filename in template directory:
         $path = __DIR__ . DS . self::$tplDir . DS;
         $filelocation = self::findWithoutExtension($path, $id);
+        $residual = RBanner::residual($id);
 
         // Вычисляем количество для вывода:
         if (self::typeMetric($metric) === 'percent') {
-            $residual = RBanner::residual($id);
-            $count = $residual - floor($residual * intval($metric) * 0.01);
+
+            $count = floor($residual * intval($metric) * 0.01);
         } else {
-            $count = RBanner::residual($id) - intval($metric);
+            $count = intval($metric);
         }
 
         // Если файл шаблона найден и количество имеется в БД то:
@@ -63,11 +64,7 @@ class BannerRotator extends CApplicationComponent
     public static function overallShow($id, $filelocation, $count)
     {
         for ($i = 0; $i < $count; $i++) {
-            echo '<div class="flash-success">';
-            self::countedShow($filelocation);
-            echo '<br>';
-            echo RBanner::residual($id);
-            echo '</div>';
+            echo readfile($filelocation);
         }
     }
 
@@ -78,16 +75,5 @@ class BannerRotator extends CApplicationComponent
             return 'percent';
         else
             return 'integer';
-    }
-
-    private static function countedShow($file)
-    {
-        echo readfile($file);
-    }
-
-    public function evalFromParcent($percent = '')
-    {
-        if ($persent == true)
-            return;
     }
 }
