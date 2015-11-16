@@ -48,10 +48,11 @@ echo  Banners::get("superbanner", '20%') // вернулось 5 кодов и �
             ...
             ),
             ...
-        'rotator' => array(
-            "class" => 'rotator.BannerRotator',
-            'templatesDir' => 'assets',
-        ),
+        'components' => array(
+            'rotator' => array(
+                "class" => 'rotator.BannerRotator',
+                'templatesDir' => 'assets',
+            ),
             ...
 ```
 
