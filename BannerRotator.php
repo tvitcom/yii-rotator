@@ -1,17 +1,12 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
- * Description of BannerRotator
- *
- * @author tvitcom
- * @license GNU GENERAL PUBLIC LICENSE Version 2
- *
  * BannerRotator - the class for show and accounting mediabanners on view pages.
+ *
+ * @package yii-rotator
+ * @author  Roman V <tvitcom@yandex.ru>
+ * @link https://github.com/tvitcom/yii-rotator
+ * @license GNU GENERAL PUBLIC LICENSE Version 2
  */
 class BannerRotator extends CApplicationComponent
 {
@@ -34,37 +29,48 @@ class BannerRotator extends CApplicationComponent
         return false;
     }
 
+    // Sample:              display('banner_ok', '10%')
     public static function display($id = '', $metric = '0%')
     {
         // Find file for id as filename in template directory:
         $path = __DIR__ . DS . self::$tplDir . DS;
         $filelocation = self::findWithoutExtension($path, $id);
-        $residual = RBanner::residual($id);
 
         // Вычисляем количество для вывода:
+        $residual = RBanner::residual($id);
         if (self::typeMetric($metric) === 'percent') {
-
-            $count = floor($residual * intval($metric) * 0.01);
+            $count = $residual * intval($metric) * 0.01;
+        } elseif (intval($metric) < $residual) {
+            $count = $residual - intval($metric);
         } else {
-            $count = intval($metric);
+            $count = $residual;
+        }
+
+        if (defined('YII_DEBUG')) {
+            echo '<br>Всего:' . $residual;
+            echo '<br>Отнять:' . $count;
+            echo '<br>Вывести:' . ceil($count);
+            echo '<br>typeMetric:' . self::typeMetric($metric);
+            echo '<br>Путь:' . $filelocation;
         }
 
         // Если файл шаблона найден и количество имеется в БД то:
-        if ($filelocation && $count) {
+        if ($filelocation && ceil($count)) {
 
             //Отнимаем в счетчике показа баннера в БД:
-            RBanner::decrementDisplay($id, $count);
-
-            self::overallShow($id, $filelocation, $count);
+            RBanner::decrementDisplay($id, ceil($count));
+            self::overallShow($residual, $filelocation, $count);
         } else {
-            echo '<div class="flash-error">error open template!!!</div>';
+            echo '<div class="flash-error">error open or balance  banner is exhausted!!!</div>';
         }
     }
 
-    public static function overallShow($id, $filelocation, $count)
+    public static function overallShow($residual, $filelocation, $count)
     {
-        for ($i = 0; $i < $count; $i++) {
-            echo readfile($filelocation);
+        if ($residual) {
+            for ($i = 0; $i < ceil($count); $i++) {
+                echo readfile($filelocation);
+            }
         }
     }
 

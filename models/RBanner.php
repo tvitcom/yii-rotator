@@ -125,6 +125,11 @@ class RBanner extends CActiveRecord
         if ($tpl_name && $decrementVal) {
             $row = $conn->createCommand($sql)->execute();
         }
+
+        $sql = 'SELECT `display` FROM `banners` WHERE `tpl_name` ="' . $tpl_name . '"';
+        if ($tpl_name && $row) {
+            $row = $conn->createCommand($sql)->queryRow();
+        }
         return $row['display'];
     }
 }
