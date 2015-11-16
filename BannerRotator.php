@@ -15,7 +15,6 @@ class BannerRotator extends CApplicationComponent
 
     public function init()
     {
-        Yii::app()->db;
         parent::init();
     }
 
@@ -33,7 +32,7 @@ class BannerRotator extends CApplicationComponent
     public static function display($id = '', $metric = '0%')
     {
         // Find file for id as filename in template directory:
-        $path = __DIR__ . DS . self::$tplDir . DS;
+        $path = __DIR__ . '/' . self::$tplDir . '/';
         $filelocation = self::findWithoutExtension($path, $id);
 
         // Вычисляем количество для вывода:
