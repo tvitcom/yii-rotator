@@ -34,31 +34,50 @@ class BannerRotator extends CApplicationComponent
         return false;
     }
 
-    public static function display($id = '', $metrics = '0%')
+    public static function display($id = '', $metric = '0%')
     {
+        // Find file for id as filename in template directory:
         $path = __DIR__ . DS . self::$tplDir . DS;
         $filelocation = self::findWithoutExtension($path, $id);
 
-        if ($filelocation && RBanner::residual($id)) {
+        // Вычисляем количество для вывода и отнимания от счетчика показов баннеров:
+        if (self::typeMetric($metric) === 'percent') {
+            $residual = RBanner::residual($id);
+            $count = $residual - floor($residual * intval($metric) * 0.01);
+        } else {
+            $count = RBanner::residual($id) - intval($metric);
+        }
 
-            RBanner::countShow($id);
+        // Если файл шаблона найден и количество имеется в БД то:
+        if ($filelocation && $count) {
 
+            //Отнимаем в счетчике показа баннера в БД:
+            RBanner::decrementDisplay($id, $count);
+
+            self::overallShow($id, $filelocation, $count);
+        } else {
+            echo '<div class="flash-error">error open template!!!</div>';
+        }
+    }
+
+    public static function overallShow($id, $filelocation, $count)
+    {
+        for ($i = 0; $i < $count; $i++) {
             echo '<div class="flash-success">';
             self::countedShow($filelocation);
             echo '<br>';
             echo RBanner::residual($id);
             echo '</div>';
-        } else {
-            echo 'error open template!!!';
         }
     }
 
-    private function whatMetric($metric = '')
+    public static function typeMetric($value = '')
     {
-        $substr = substr();
-        if ($substr = '%')
-            return '%';
-        return 'int';
+        $value = strpbrk($value, '%');
+        if ($value)
+            return 'percent';
+        else
+            return 'integer';
     }
 
     private static function countedShow($file)

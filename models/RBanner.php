@@ -115,13 +115,13 @@ class RBanner extends CActiveRecord
         return $row['display'];
     }
 
-    public static function countShow($tpl_name = '')
+    public static function decrementDisplay($tpl_name = '', $decrementVal = 0)
     {
         $conn = Yii::app()->db;
 
         //counter for ID banner record
         $sql = 'UPDATE `banners` SET `display` = `display`-1 WHERE `tpl_name` ="' . $tpl_name . '"';
-        if ($tpl_name) {
+        if ($tpl_name && $decrementVal) {
             $row = $conn->createCommand($sql)->execute();
         }
         return $row['display'];
