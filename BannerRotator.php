@@ -16,25 +16,40 @@
 class BannerRotator extends CApplicationComponent
 {
     public static $tplDir = 'assets';
+    public static $arrTplExtensions = array('.html', '.js');
 
     public function init()
     {
-        //Yii::import('application.extensions.banner.models.Banner');
+        Yii::app()->db;
         parent::init();
     }
 
-    //put your code here
+    public static function findWithoutExtension($path = '', $name = '')
+    {
+        foreach (self::$arrTplExtensions as $extension) {
+            $filelocation = $path . $name . $extension;
+            if (file_exists($filelocation))
+                return $filelocation;
+        }
+        return false;
+    }
+
     public static function display($id = '', $metrics = '0%')
     {
-        $filename = $id;
-        $path = __DIR__ . DS . $id;
+        $path = __DIR__ . DS . self::$tplDir . DS;
+        $filelocation = self::findWithoutExtension($path, $id);
 
-        if (($id) && (file_exists($path))) {
+        if ($filelocation && RBanner::residual($id)) {
+
+            RBanner::countShow($id);
+
             echo '<div class="flash-success">';
-            self::countedShow($path);
+            self::countedShow($filelocation);
+            echo '<br>';
+            echo RBanner::residual($id);
             echo '</div>';
         } else {
-            echo '123 error open template!!!';
+            echo 'error open template!!!';
         }
     }
 
@@ -46,14 +61,13 @@ class BannerRotator extends CApplicationComponent
         return 'int';
     }
 
-    private static function countedShow($path)
+    private static function countedShow($file)
     {
-        echo readfile($path);
+        echo readfile($file);
     }
 
     public function evalFromParcent($percent = '')
     {
-
         if ($persent == true)
             return;
     }
