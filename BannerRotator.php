@@ -69,7 +69,11 @@ class BannerRotator extends CApplicationComponent
     {
         if ($residual) {
             for ($i = 0; $i < ceil($count); $i++) {
-                echo readfile($filelocation);
+                echo '<div class="flash-success">';
+                $opendata = fopen($filelocation, "rb");
+                fpassthru($opendata);
+                fclose($opendata);
+                echo '</div>';
             }
         }
     }
